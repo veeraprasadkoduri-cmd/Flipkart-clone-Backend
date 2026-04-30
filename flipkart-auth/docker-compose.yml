@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: flipkart-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: flipkart123
+      MYSQL_DATABASE: flipkart_clone
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: flipkart-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend
+    container_name: flipkart-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
